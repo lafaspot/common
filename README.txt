@@ -1,6 +1,5 @@
 # common
-java common class used across lafaspot libraries
-Java shared across lafaspot team libraries this code is designed to scale well when using large number of threads and cpus.
+Java common classed shared across lafaspot libraries, this code is designed to scale well when using large number of threads and cpus.
 
 - To build before you submit a PR
 $ mvn clean install
