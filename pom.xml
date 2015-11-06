@@ -20,6 +20,13 @@
             <email>jpowang@yahoo.com</email>
         </developer>
     </developers>
+    
+    <scm>
+        <developerConnection>scm:git:https://github.com/lafa/common.git</developerConnection>
+        <connection>scm:git:https://github.com/lafa/common.git</connection>
+        <url>https://github.com/lafa/common.git</url>
+        <tag>common-1.0</tag>
+    </scm>
 
     <issueManagement>
         <system>GitHub</system>
