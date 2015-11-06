@@ -5,13 +5,12 @@
   <parent>
     <groupId>com.github.lafa.common</groupId>
     <artifactId>common</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
   </parent>
-  <groupId>com.github.lafa.common</groupId>
-  <artifactId>core</artifactId>
-  <version>1.0.0</version>
-  <name>core</name>
-  <url>http://maven.apache.org</url>
+  <artifactId>common.core</artifactId>
+    <name>${project.artifactId}</name>
+    <url>https://github.com/lafaspot/common</url>
+    <description>common component ${project.name}</description>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <main.basedir>${project.parent.basedir}</main.basedir>
