@@ -18,17 +18,21 @@
 
 package com.lafaspot.common.util;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.lafaspot.logfast.logging.LogContext;
 
 /**
- * Dummy Annotation.
- *
+ * AnnotationScannerContext.
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE })
-public @interface DummyAnnotation {
+public class AnnotationScannerContext extends LogContext {
+
+	/**
+	 * Constructor for context.
+	 * 
+	 * @param name
+	 *            context
+	 */
+	public AnnotationScannerContext(final String name) {
+		super(name);
+	}
 
 }
