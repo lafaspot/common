@@ -5,21 +5,13 @@
     <groupId>com.github.lafa.common</groupId>
     <artifactId>common</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <name>${project.artifactId}</name>
     <url>https://github.com/lafaspot/common</url>
     <description>Parent POM file for common project</description>
     <prerequisites>
         <maven>3.0</maven>
     </prerequisites>
-
-    <developers>
-        <developer>
-            <id>jpowang</id>
-            <name>Jason Wang</name>
-            <email>jpowang@yahoo.com</email>
-        </developer>
-    </developers>
     
     <scm>
         <developerConnection>scm:git:https://github.com/lafa/common.git</developerConnection>
