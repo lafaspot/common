@@ -25,6 +25,8 @@ import java.util.Set;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.lafaspot.logfast.logging.LogManager;
+
 /**
  * Basic unit test for AnnotationClassScanner.
  *
@@ -36,7 +38,7 @@ public class AnnotationClassScannerTest {
 	@Test
 	public void testAnnotationClassScanner() {
 		final AnnotationClassScanner<DummyAnnotation> annotationScanner = new AnnotationClassScanner<DummyAnnotation>(
-				DummyAnnotation.class, Arrays.asList("com.lafaspot.common.util"));
+				DummyAnnotation.class, Arrays.asList("com.lafaspot.common.util"), new LogManager());
 		final Set<Class<?>> beans = annotationScanner.scanAnnotatedClasses();
 		Assert.assertEquals(1, beans.size());
 		final Iterator it = beans.iterator();
@@ -51,7 +53,7 @@ public class AnnotationClassScannerTest {
 	@Test
 	public void testScanClassPathNoBeans() {
 		final AnnotationClassScanner<DummyNoBeanAnnotation> annotationScanner = new AnnotationClassScanner<DummyNoBeanAnnotation>(
-				DummyNoBeanAnnotation.class, Arrays.asList("com.lafaspot.common.util"));
+				DummyNoBeanAnnotation.class, Arrays.asList("com.lafaspot.common.util"), new LogManager());
 		final Set<Class<?>> beans = annotationScanner.scanAnnotatedClasses();
 		Assert.assertEquals(0, beans.size());
 	}
@@ -62,7 +64,7 @@ public class AnnotationClassScannerTest {
 	@Test
 	public void testScanClassPathBadPath() {
 		final AnnotationClassScanner<DummyAnnotation> annotationScanner = new AnnotationClassScanner<DummyAnnotation>(
-				DummyAnnotation.class, Arrays.asList("test.path"));
+				DummyAnnotation.class, Arrays.asList("test.path"), new LogManager());
 		final Set<Class<?>> beans = annotationScanner.scanAnnotatedClasses();
 		Assert.assertEquals(0, beans.size());
 	}

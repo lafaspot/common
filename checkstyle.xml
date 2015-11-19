@@ -13,7 +13,7 @@
 		<property name="onCommentFormat" value="CHECKSTYLE\:ON\: ([\w\|]+)" />
 		<property name="checkFormat" value="$1" />
 	</module>
-			<module name="RegexpHeader">
+	<module name="RegexpHeader">
 			<metadata name="net.sf.eclipsecs.core.comment"
 				value="Checks that the file starts with copyright block." />
 			<property name="headerFile" value="java.header" />

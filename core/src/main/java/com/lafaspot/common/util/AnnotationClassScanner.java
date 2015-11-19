@@ -32,7 +32,9 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import com.lafaspot.logfast.logging.LogContext;
 import com.lafaspot.logfast.logging.LogManager;
+import com.lafaspot.logfast.logging.Logger;
 
 /**
  * Annotation class scanner which scans for all annotations based on the
@@ -62,9 +64,9 @@ public class AnnotationClassScanner<T extends Annotation> {
 	 */
 	private final Set<String> dirLookupSet = new HashSet<String>();
 	/**
-	 * LogManager class.
+	 * Logger class.
 	 */
-	private final LogManager logManager = new LogManager();
+	private Logger logger;
 
 	/**
 	 * Private annotationClassScanner constructor.
@@ -91,13 +93,18 @@ public class AnnotationClassScanner<T extends Annotation> {
 	 *            Annotated class
 	 * @param allowFilter
 	 *            Filter to be included
+	 * @param logManager
+	 *            LogManager
 	 */
-	public AnnotationClassScanner(final Class<T> annotationClazz, final List<String> allowFilter) {
+	public AnnotationClassScanner(final Class<T> annotationClazz, final List<String> allowFilter,
+			final LogManager logManager) {
 		this(annotationClazz);
 		if (allowFilter == null) {
 			throw new IllegalArgumentException("Include filter can't be null");
 		}
 		this.allowFilter.addAll(allowFilter);
+		LogContext context = new AnnotationScannerContext("AnnotationClassScanner:" + annotationClazz.getName());
+		logger = logManager.getLogger(context);
 	}
 
 	/**
@@ -124,7 +131,7 @@ public class AnnotationClassScanner<T extends Annotation> {
 			try {
 				clazzez.addAll(scanPackageAnnotatedClasses(sPackage));
 			} catch (final IOException e) {
-				logManager.getLogger(new AnnotationScannerContext(sPackage.getName())).warn("AnnotationClassScanner failed for package", e);
+				logger.warn("AnnotationClassScanner failed for package: " + sPackage.getName(), e);
 			}
 		}
 		return clazzez;
@@ -286,7 +293,10 @@ public class AnnotationClassScanner<T extends Annotation> {
 				}
 			} catch (final ClassNotFoundException | NoClassDefFoundError | UnsatisfiedLinkError
 					| UnsupportedClassVersionError e) {
-				logManager.getLogger(new AnnotationScannerContext(clazzName)).debug("Unable to search classes for annotations", e);
+				if (logger.isDebug()) {
+					logger.debug("Unable to search classes for annotations: " + clazzName, e);
+				}
+
 			}
 		}
 		return null;
