@@ -66,15 +66,17 @@ public class AnnotationClassScanner<T extends Annotation> {
 	/**
 	 * Logger class.
 	 */
-	private Logger logger;
+	private final Logger logger;
 
 	/**
 	 * Private annotationClassScanner constructor.
 	 * 
 	 * @param annotationClazz
 	 *            Annotated class
+	 * @param logManager
+	 *            LogManager
 	 */
-	private AnnotationClassScanner(final Class<T> annotationClazz) {
+	private AnnotationClassScanner(final Class<T> annotationClazz, final LogManager logManager) {
 		if (annotationClazz == null) {
 			throw new IllegalArgumentException("Annotation class can't be null");
 		}
@@ -84,6 +86,8 @@ public class AnnotationClassScanner<T extends Annotation> {
 				"org.relaxng.", "mockit.", "com.beust.", "org.apache.log4j.", "ch.qos.logback.", "org.slf4j.",
 				"org.apache.commons.logging." };
 		excludeFilter = new HashSet<String>(Arrays.asList(packageToExclude));
+		LogContext context = new AnnotationScannerContext("AnnotationClassScanner:" + annotationClazz.getName());
+		logger = logManager.getLogger(context);
 	}
 
 	/**
@@ -98,13 +102,11 @@ public class AnnotationClassScanner<T extends Annotation> {
 	 */
 	public AnnotationClassScanner(final Class<T> annotationClazz, final List<String> allowFilter,
 			final LogManager logManager) {
-		this(annotationClazz);
+		this(annotationClazz, logManager);
 		if (allowFilter == null) {
 			throw new IllegalArgumentException("Include filter can't be null");
 		}
 		this.allowFilter.addAll(allowFilter);
-		LogContext context = new AnnotationScannerContext("AnnotationClassScanner:" + annotationClazz.getName());
-		logger = logManager.getLogger(context);
 	}
 
 	/**
