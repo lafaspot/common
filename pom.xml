@@ -19,6 +19,13 @@
         <url>https://github.com/lafa/common.git</url>
         <tag>common-1.0</tag>
     </scm>
+	<developers>
+		<developer>
+			<id>lafa</id>
+			<name>Lafa</name>
+			<email>luis.alves@lafaspot.com</email>
+		</developer>
+	</developers>
 
     <issueManagement>
         <system>GitHub</system>
