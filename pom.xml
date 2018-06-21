@@ -5,7 +5,7 @@
     <groupId>com.github.lafa.common</groupId>
     <artifactId>common</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <name>${project.artifactId}</name>
     <url>https://github.com/lafaspot/common</url>
     <description>Parent POM file for common project</description>
@@ -489,7 +489,7 @@
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
-                        <phase>verify</phase>
+                        <phase>deploy</phase>
                         <goals>
                             <goal>sign</goal>
                         </goals>
@@ -542,7 +542,7 @@
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
-                                <phase>verify</phase>
+                                <phase>deploy</phase>
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
