@@ -15,3 +15,4 @@ after_success:
 after_failure:
 - cat com.github.lafa.common/target/surefire-reports/*.txt
 - cat com.github.lafa.common/core/target/surefire-reports/*.txt
+- cat com.github.lafa.common/core/target/surefire-reports/*.txt
