@@ -41,7 +41,7 @@ public enum SystemSettings {
     protected String ip;
 
     /**
-     * top-level domain is domain at highest level in the hierarchical Domain Name SystemSettings. for e.g: domain name www.example.com, the top-level domain
+     * top-level domain is domain at highest level in the hierarchical Domain Name System. for e.g: domain name www.example.com, the top-level domain
      * is .com
      */
     protected String tld;
