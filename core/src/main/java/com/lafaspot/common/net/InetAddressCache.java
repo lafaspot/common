@@ -42,7 +42,6 @@ import java.net.UnknownHostException;
  *
  * <p>
  * All methods in this class are multithread-safe.
- * @author manish211
  */
 public enum InetAddressCache {
 

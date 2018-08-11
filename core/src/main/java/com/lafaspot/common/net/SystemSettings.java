@@ -28,17 +28,15 @@ import org.slf4j.MarkerFactory;
 /**
  * This class is used to derive top-level domain, hostname, colo, ip address.
  *
- * @author manish211
- *
  */
-public enum System {
+public enum SystemSettings {
     /**
      * Instance.
      */
     INSTANCE;
 
     protected String hostname;
-    private final Logger logger = LoggerFactory.getLogger(System.class);
+    private final Logger logger = LoggerFactory.getLogger(SystemSettings.class);
     protected String colo;
     protected String ip;
 
@@ -76,7 +74,7 @@ public enum System {
         return ip;
     }
 
-    private System() {
+    private SystemSettings() {
         try {
             hostname = InetAddressCache.INSTANCE.getHostName();
             final int tldStartIndex = hostname.lastIndexOf(".");

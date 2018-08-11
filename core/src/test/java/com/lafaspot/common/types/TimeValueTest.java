@@ -26,8 +26,6 @@ import org.testng.annotations.Test;
 /**
  * Unit tests of the {@linkplain TimeValue}.
  * 
- * @author manish211
- *
  */
 public class TimeValueTest {
 

@@ -29,8 +29,6 @@ import javax.annotation.Nonnull;
 /**
  * Physical quantities with units of time, and 64-bit integer values.
  *
- * @author manish211
- *
  */
 public final class TimeValue implements java.io.Serializable, Comparable<TimeValue> {
 
