@@ -5,7 +5,7 @@
     <groupId>com.github.lafa.common</groupId>
     <artifactId>common</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
     <name>${project.artifactId}</name>
     <url>https://github.com/lafaspot/common</url>
     <description>Parent POM file for common project</description>
