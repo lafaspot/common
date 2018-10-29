@@ -67,4 +67,9 @@ public interface Worker<T> {
     @Nonnull
     WorkerBlockManager getBlockManager();
 
+    /**
+     * Cleanup the worker when it is done.
+     */
+    void cleanup();
+
 }

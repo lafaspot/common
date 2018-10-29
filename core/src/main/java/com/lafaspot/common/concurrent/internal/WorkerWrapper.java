@@ -73,17 +73,41 @@ public class WorkerWrapper<V> {
      */
     protected boolean execute() throws WorkerException {
         boolean done = true;
+        Exception exception = null;
+        V data = null;
         try {
             stats.recordBeginExecute();
             done = canceled.get() || worker.execute();
+            if (done) {
+                if (worker.hasErrors()) {
+                    exception = worker.getCause();
+                } else {
+                    data = worker.getData();
+                }
+            }
         } catch (final Exception e) {
             logger.error("Uncaught exception occurred in worker", e);
-            future.done(e);
+            exception = e;
+            stats.recordExceptionTriggered(e);
+        }
+        try {
+            if (done) {
+                worker.cleanup();
+            }
+        } catch (final Exception e) {
+            logger.error("Uncaught exception occurred in worker", e);
+            exception = e;
             stats.recordExceptionTriggered(e);
         }
         if (done) {
-            future.done(canceled.get());
+            if (exception != null) {
+                future.done(canceled.get(), exception);
+            } else {
+                future.done(data, canceled.get());
+            }
         }
+        data = null;
+        exception = null;
         stats.recordEndExecute(done);
         return done;
     }
@@ -102,7 +126,7 @@ public class WorkerWrapper<V> {
      * @param mayInterruptIfRunning true if interruption is allowed, else false
      */
     protected void cancel(final boolean mayInterruptIfRunning) {
-        canceled.set(false);
+        canceled.set(true);
         if (canceled.get()) {
             stats.recordCanceled();
         }
