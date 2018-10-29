@@ -1,13 +1,13 @@
 /*
  * Copyright [yyyy] [name of copyright owner]
- * 
+ *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -76,13 +76,21 @@ public class WorkerWrapper<V> {
         try {
             stats.recordBeginExecute();
             done = canceled.get() || worker.execute();
+            if (done) {
+                if (canceled.get()) {
+
+                } else if (worker.hasErrors()) {
+                    future.done(false, worker.getCause());
+                } else {
+                    future.done(false, worker.getData());
+                }
+                worker.cleanup();
+            }
         } catch (final Exception e) {
             logger.error("Uncaught exception occurred in worker", e);
-            future.done(e);
+            future.done(false, e);
+            worker.cleanup();
             stats.recordExceptionTriggered(e);
-        }
-        if (done) {
-            future.done(canceled.get());
         }
         stats.recordEndExecute(done);
         return done;
@@ -102,7 +110,7 @@ public class WorkerWrapper<V> {
      * @param mayInterruptIfRunning true if interruption is allowed, else false
      */
     protected void cancel(final boolean mayInterruptIfRunning) {
-        canceled.set(false);
+        canceled.set(true);
         if (canceled.get()) {
             stats.recordCanceled();
         }
@@ -122,6 +130,14 @@ public class WorkerWrapper<V> {
     @Nonnull
     public WorkerStats getStat() {
         return stats;
+    }
+
+    /**
+     * Cleanup the worker when it is done.
+     */
+    @Nonnull
+    public void cleanup() {
+        worker.cleanup();
     }
 
 }

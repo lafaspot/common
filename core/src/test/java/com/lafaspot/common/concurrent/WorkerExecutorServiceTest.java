@@ -1,13 +1,13 @@
 /*
  * Copyright [yyyy] [name of copyright owner]
- * 
+ *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -155,14 +155,10 @@ public class WorkerExecutorServiceTest {
     /**
      * Tests with good workers.
      *
-     * @throws InterruptedException
-     *             not expected
-     * @throws ExecutionException
-     *             not expected
-     * @throws WorkerException
-     *             not expected
-     * @throws TimeoutException
-     *             not expected
+     * @throws InterruptedException not expected
+     * @throws ExecutionException not expected
+     * @throws WorkerException not expected
+     * @throws TimeoutException not expected
      */
     @Test
     public void testGoodWorker() throws InterruptedException, ExecutionException, WorkerException, TimeoutException {
@@ -176,14 +172,10 @@ public class WorkerExecutorServiceTest {
     /**
      * Tests worker with errors.
      *
-     * @throws InterruptedException
-     *             not expected
-     * @throws ExecutionException
-     *             not expected
-     * @throws WorkerException
-     *             not expected
-     * @throws TimeoutException
-     *             not expected
+     * @throws InterruptedException not expected
+     * @throws ExecutionException not expected
+     * @throws WorkerException not expected
+     * @throws TimeoutException not expected
      */
     @Test
     public void testWorkerWithHasErrors() throws InterruptedException, ExecutionException, WorkerException, TimeoutException {
@@ -201,14 +193,10 @@ public class WorkerExecutorServiceTest {
     /**
      * Tests worker that throws a WorkerException.
      *
-     * @throws InterruptedException
-     *             not expected
-     * @throws ExecutionException
-     *             not expected
-     * @throws WorkerException
-     *             not expected
-     * @throws TimeoutException
-     *             not expected
+     * @throws InterruptedException not expected
+     * @throws ExecutionException not expected
+     * @throws WorkerException not expected
+     * @throws TimeoutException not expected
      */
     @Test
     public void testWorkerWithWorkerException() throws InterruptedException, ExecutionException, WorkerException, TimeoutException {
@@ -226,14 +214,10 @@ public class WorkerExecutorServiceTest {
     /**
      * Runs a test with 32 workers.
      *
-     * @throws InterruptedException
-     *             not expected
-     * @throws ExecutionException
-     *             not expected
-     * @throws WorkerException
-     *             not expected
-     * @throws TimeoutException
-     *             not expected
+     * @throws InterruptedException not expected
+     * @throws ExecutionException not expected
+     * @throws WorkerException not expected
+     * @throws TimeoutException not expected
      */
     @Test
     public void test32Workers() throws InterruptedException, ExecutionException, WorkerException, TimeoutException {
@@ -297,8 +281,8 @@ public class WorkerExecutorServiceTest {
             try {
                 future.get(1, TimeUnit.MILLISECONDS);
                 Assert.fail("Cancelation exception was expected.");
-            } catch (final java.util.concurrent.CancellationException e) {
-                Assert.assertEquals(e.getClass().getName(), java.util.concurrent.CancellationException.class.getName());
+            } catch (final ExecutionException e) {
+                Assert.assertEquals(e.getCause().getClass().getName(), java.util.concurrent.CancellationException.class.getName());
             } catch (final TimeoutException e) {
                 Assert.fail("Cancelation exception was expected.");
             }
@@ -368,6 +352,11 @@ public class WorkerExecutorServiceTest {
             return blockManager;
         }
 
+        @Override
+        public void cleanup() {
+
+        }
+
     }
 
     /**
@@ -404,6 +393,11 @@ public class WorkerExecutorServiceTest {
         @Override
         public WorkerBlockManager getBlockManager() {
             return blockManager;
+        }
+
+        @Override
+        public void cleanup() {
+
         }
 
     }
@@ -444,6 +438,11 @@ public class WorkerExecutorServiceTest {
             return blockManager;
         }
 
+        @Override
+        public void cleanup() {
+
+        }
+
     }
 
     /**
@@ -476,6 +475,11 @@ public class WorkerExecutorServiceTest {
         @Override
         public WorkerBlockManager getBlockManager() {
             return null;
+        }
+
+        @Override
+        public void cleanup() {
+
         }
 
     }
@@ -515,6 +519,11 @@ public class WorkerExecutorServiceTest {
             return blockManager;
         }
 
+        @Override
+        public void cleanup() {
+
+        }
+
     };
 
     /**
@@ -550,6 +559,11 @@ public class WorkerExecutorServiceTest {
         @Override
         public WorkerBlockManager getBlockManager() {
             return blockManager;
+        }
+
+        @Override
+        public void cleanup() {
+
         }
 
     };
@@ -593,6 +607,11 @@ public class WorkerExecutorServiceTest {
         public WorkerBlockManager getBlockManager() {
             return blockManager;
         }
+
+        @Override
+        public void cleanup() {
+
+        }
     };
 
     /**
@@ -628,6 +647,11 @@ public class WorkerExecutorServiceTest {
         @Override
         public WorkerBlockManager getBlockManager() {
             return blockManager;
+        }
+
+        @Override
+        public void cleanup() {
+
         }
     };
 }

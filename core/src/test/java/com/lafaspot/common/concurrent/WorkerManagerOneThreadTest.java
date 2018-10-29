@@ -1,13 +1,13 @@
 /*
  * Copyright [yyyy] [name of copyright owner]
- * 
+ *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,12 +30,13 @@ import javax.annotation.Nonnull;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.lafaspot.common.concurrent.internal.WorkerManagerOneThread;
+
 /**
  * Unit test for {@link WorkerManagerOneThread}.
  *
  */
 public class WorkerManagerOneThreadTest {
-
 
     /**
      * Tests multiple workers in one worker thread.
@@ -65,11 +66,9 @@ public class WorkerManagerOneThreadTest {
 
         exec.shutdown();
 
-        Assert.assertEquals(state.getCurrent(blockId).intValue(), 0,
-                "counter should be reset to 0 after all worker execution is done");
+        Assert.assertEquals(state.getCurrent(blockId).intValue(), 0, "counter should be reset to 0 after all worker execution is done");
         Assert.assertEquals(state.getUnblocked(blockId), 0L, "total number of unblocked workers should be 1 after all worker is done");
-        Assert.assertEquals(state.getInQueue(blockId).intValue(), 0,
-                "total number of unblocked workers should be 1 after all worker is done");
+        Assert.assertEquals(state.getInQueue(blockId).intValue(), 0, "total number of unblocked workers should be 1 after all worker is done");
 
         long totalLatency = 0;
         int totalCommand = 0;
@@ -82,7 +81,6 @@ public class WorkerManagerOneThreadTest {
         double latency = totalLatency / totalCommand;
         Assert.assertTrue(latency < workerCount / 2, "Latency should less than worker count divide by 2");
     }
-
 
     /**
      * Tests one worker thread with workers that throw exceptions.
@@ -184,6 +182,7 @@ public class WorkerManagerOneThreadTest {
 
     /**
      * Imap worker state.
+     *
      * @author kaituo
      *
      */
@@ -204,7 +203,7 @@ public class WorkerManagerOneThreadTest {
 
         /** Worker Id. */
         private int workerId;
-        /** Command start time.*/
+        /** Command start time. */
         private long commandStartTime;
         /** Worker execute count. */
         private int executeCount;
@@ -277,6 +276,10 @@ public class WorkerManagerOneThreadTest {
         public WorkerBlockManager getBlockManager() {
             return this.blockManager;
         }
+
+        @Override
+        public void cleanup() {
+        }
     }
 
     /**
@@ -331,6 +334,10 @@ public class WorkerManagerOneThreadTest {
         @Override
         public WorkerBlockManager getBlockManager() {
             return this.blockManager;
+        }
+
+        @Override
+        public void cleanup() {
         }
     }
 
@@ -387,6 +394,10 @@ public class WorkerManagerOneThreadTest {
         @Override
         public WorkerBlockManager getBlockManager() {
             return this.blockManager;
+        }
+
+        @Override
+        public void cleanup() {
         }
     }
 
