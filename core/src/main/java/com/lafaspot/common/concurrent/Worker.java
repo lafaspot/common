@@ -66,5 +66,12 @@ public interface Worker<T> {
      */
     @Nonnull
     WorkerBlockManager getBlockManager();
+    
+    /**
+     * Cleanup the response and exception from the worker.
+     * @return 
+     */
+    @Nonnull
+    void close();
 
 }

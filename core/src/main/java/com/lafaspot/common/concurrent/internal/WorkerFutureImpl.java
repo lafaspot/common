@@ -107,6 +107,7 @@ public class WorkerFutureImpl<T> implements WorkerFuture<T> {
                     if (worker.getWorkerImpl().hasErrors()) {
                         causeRef.set(worker.getWorkerImpl().getCause());
                     }
+                    worker.close();
                     isDone.set(true);
                     isCanceled.set(canceled);
                 }
@@ -130,6 +131,7 @@ public class WorkerFutureImpl<T> implements WorkerFuture<T> {
                     causeRef.set(cause);
                     isDone.set(true);
                 }
+                worker.close();
             }
             lock.notify();
         }

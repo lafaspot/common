@@ -87,6 +87,13 @@ public class WorkerWrapper<V> {
         stats.recordEndExecute(done);
         return done;
     }
+    
+    /**
+     * Close and cleanup the worker.
+     */
+    protected void close() {
+    	worker.close();
+    }
 
     /**
      * @return the future for this worker
