@@ -1,13 +1,13 @@
 /*
  * Copyright [yyyy] [name of copyright owner]
- * 
+ *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -76,7 +76,7 @@ public class WorkerFutureImpl<T> implements WorkerFuture<T> {
             if (workerRef.get() != null) {
                 workerRef.get().cancel(mayInterruptIfRunning);
             }
-            done(true);
+            done(true, new CancellationException());
         }
         return true;
     }
@@ -96,17 +96,14 @@ public class WorkerFutureImpl<T> implements WorkerFuture<T> {
      *
      * @param canceled true if the call was the result of a cancellation
      */
-    protected void done(final boolean canceled) {
+    protected void done(boolean canceled, final T data) {
         // Assign internal state of the future, make sure we copy local references and lose reference to the worker
         synchronized (lock) {
             if (!isDone.get()) {
                 // Unset Worker reference when worker is done
                 WorkerWrapper<T> worker = workerRef.get();
                 if (workerRef.compareAndSet(worker, null)) {
-                    dataRef.set(worker.getWorkerImpl().getData());
-                    if (worker.getWorkerImpl().hasErrors()) {
-                        causeRef.set(worker.getWorkerImpl().getCause());
-                    }
+                    dataRef.set(data);
                     isDone.set(true);
                     isCanceled.set(canceled);
                 }
@@ -120,7 +117,7 @@ public class WorkerFutureImpl<T> implements WorkerFuture<T> {
      *
      * @param cause the exception that caused execution to fail
      */
-    protected void done(final Exception cause) {
+    protected void done(final boolean canceled, final Exception cause) {
         // Assign internal state of the future, make sure we copy local references and lose reference to the worker
         synchronized (lock) {
             if (!isDone.get()) {
@@ -129,6 +126,7 @@ public class WorkerFutureImpl<T> implements WorkerFuture<T> {
                 if (workerRef.compareAndSet(worker, null)) {
                     causeRef.set(cause);
                     isDone.set(true);
+                    isCanceled.set(canceled);
                 }
             }
             lock.notify();
@@ -181,10 +179,10 @@ public class WorkerFutureImpl<T> implements WorkerFuture<T> {
             lock.notify();
         }
         if (isDone.get()) {
-            if (causeRef.get() != null) {
-                throw new ExecutionException(causeRef.get());
-            } else if (isCancelled()) {
+            if (isCancelled()) {
                 throw new CancellationException();
+            } else if (causeRef.get() != null) {
+                throw new ExecutionException(causeRef.get());
             } else {
                 return dataRef.get();
             }
@@ -192,4 +190,5 @@ public class WorkerFutureImpl<T> implements WorkerFuture<T> {
             throw new TimeoutException("Timeout reached.");
         }
     }
+
 }
