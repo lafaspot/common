@@ -196,7 +196,7 @@ public class WorkerManagerOneThread implements Callable<WorkerManagerState> {
         }
 
         long loopDuration = System.nanoTime() - loopStartTime;
-        if (loopDuration <= (2 * SLEEP_COUNT_NANO)) {
+        if (loopDuration - loopTotalSleepTime * 1000000 <= (2 * SLEEP_COUNT_NANO)) {
             return;
         }
 
