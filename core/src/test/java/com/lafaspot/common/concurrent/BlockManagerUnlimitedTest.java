@@ -188,5 +188,10 @@ public final class BlockManagerUnlimitedTest {
         public WorkerBlockManager getBlockManager() {
             return this.blockManager;
         }
+
+        @Override
+        public void cleanup() {
+            state = null;
+        }
     }
 }

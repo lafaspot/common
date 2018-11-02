@@ -428,6 +428,11 @@ public final class BlockManagerMaxCountTest {
         public WorkerBlockManager getBlockManager() {
             return this.blockManager;
         }
+
+        @Override
+        public void cleanup() {
+            state = null;
+        }
     }
 
     /**
@@ -546,6 +551,11 @@ public final class BlockManagerMaxCountTest {
         public String toString() {
             return "ImapWorkerAsync";
         }
+
+        @Override
+        public void cleanup() {
+            this.sharedCounter = null;
+        }
     }
 
     /**
@@ -653,7 +663,7 @@ public final class BlockManagerMaxCountTest {
         /** Shared state. */
         private final AtomicInteger sharedCounter;
         /** Maximum number of workers concurrently running. */
-        private final AtomicInteger max;
+        private AtomicInteger max;
 
         /**
          * Constructor of WorkerWithCheckedException.
@@ -709,6 +719,11 @@ public final class BlockManagerMaxCountTest {
         @Override
         public WorkerBlockManager getBlockManager() {
             return this.blockManager;
+        }
+
+        @Override
+        public void cleanup() {
+            max = null;
         }
     }
 
@@ -782,6 +797,11 @@ public final class BlockManagerMaxCountTest {
         @Override
         public WorkerBlockManager getBlockManager() {
             return this.blockManager;
+        }
+
+        @Override
+        public void cleanup() {
+            exception = null;
         }
     }
 
@@ -870,6 +890,11 @@ public final class BlockManagerMaxCountTest {
             return this.blockManager;
         }
 
+        @Override
+        public void cleanup() {
+            exception = null;
+        }
+
     }
 
     /**
@@ -956,6 +981,11 @@ public final class BlockManagerMaxCountTest {
         @Override
         public WorkerBlockManager getBlockManager() {
             return this.blockManager;
+        }
+
+        @Override
+        public void cleanup() {
+            exception = null;
         }
     }
 
