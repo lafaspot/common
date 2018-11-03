@@ -180,6 +180,8 @@ public class WorkerManagerOneThread implements Callable<WorkerManagerState> {
             }
         }
         workerSourceQueue.removeFuturesDone();
+        final ThreadLocal t = new ThreadLocal();
+        t.remove();
         return new WorkerManagerState(workers);
     }
 
