@@ -17,6 +17,10 @@
  */
 package com.lafaspot.common.concurrent.internal;
 
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Array;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.concurrent.Callable;
@@ -180,9 +184,64 @@ public class WorkerManagerOneThread implements Callable<WorkerManagerState> {
             }
         }
         workerSourceQueue.removeFuturesDone();
-        final ThreadLocal t = new ThreadLocal();
-        t.remove();
+        cleanThreadLocals();
         return new WorkerManagerState(workers);
+    }
+
+    /**
+     * Clean thread locals.
+     */
+    private void cleanThreadLocals() {
+        try {
+            // Get a reference to the thread locals table of the current thread
+            Thread thread = Thread.currentThread();
+            java.lang.reflect.Field threadLocalsField = Thread.class.getDeclaredField("threadLocals");
+            threadLocalsField.setAccessible(true);
+            Object threadLocalTable = threadLocalsField.get(thread);
+
+            // Get a reference to the array holding the thread local variables inside the
+            // ThreadLocalMap of the current thread
+            Class threadLocalMapClass = Class.forName("java.lang.ThreadLocal$ThreadLocalMap");
+            java.lang.reflect.Field tableField = threadLocalMapClass.getDeclaredField("table");
+            tableField.setAccessible(true);
+            Object table = tableField.get(threadLocalTable);
+
+            // The key to the ThreadLocalMap is a WeakReference object. The referent field of this object
+            // is a reference to the actual ThreadLocal variable
+            java.lang.reflect.Field referentField = Reference.class.getDeclaredField("referent");
+            referentField.setAccessible(true);
+
+            for (int i = 0; i < Array.getLength(table); i++) {
+                // Each entry in the table array of ThreadLocalMap is an Entry object
+                // representing the thread local reference and its value
+                Object entry = Array.get(table, i);
+                if (entry != null) {
+                    // Log a debug message in here, to stop using threadlocals -- lafa
+                    if (logger.isDebugEnabled()) {
+                        Class threadLocalMapEntryClass = Class.forName("java.lang.ThreadLocal$ThreadLocalMap$Entry");
+                        java.lang.reflect.Field entryValueField = threadLocalMapEntryClass.getDeclaredField("value");
+                        entryValueField.setAccessible(true);
+                        Object entryValue = entryValueField.get(entry);
+                        StringBuilder sb = new StringBuilder(512);
+                        sb.append(entryValue.getClass().getName());
+                        if (entryValue instanceof SoftReference) {
+                            sb.append(":").append(((SoftReference) entryValue).get().getClass().getName());
+                        } else if (entryValue instanceof WeakReference) {
+                            sb.append(":").append(((WeakReference) entryValue).get().getClass().getName());
+                        }
+                        logger.debug(
+                                "threadlocal found please remove this from code, as it create memory/full gc problems, thread name={},class={}",
+                                thread.getName(), sb.toString());
+                    }
+                    // Get a reference to the thread local object and remove it from the table
+                    ThreadLocal threadLocal = (ThreadLocal) referentField.get(entry);
+                    threadLocal.remove();
+                }
+            }
+        } catch (Exception e) {
+            // We will tolerate an exception here and just log it
+            throw new IllegalStateException(e);
+        }
     }
 
     /**
