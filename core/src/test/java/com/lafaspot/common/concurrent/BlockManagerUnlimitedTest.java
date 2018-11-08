@@ -43,7 +43,7 @@ public final class BlockManagerUnlimitedTest {
      */
     @Test(invocationCount = 1)
     public void testWorkerManagerOneThreadWithMultipleWorkers() throws InterruptedException, ExecutionException, WorkerException, TimeoutException {
-        final WorkerExecutorService exec = new WorkerExecutorService(10);
+        final WorkerExecutorService exec = new WorkerExecutorService(10, new WorkerConfig.Builder().build());
         final List<ImapWorker> workers = new ArrayList<>();
         final List<WorkerFuture<Integer>> futures = new ArrayList<WorkerFuture<Integer>>();
         int workerCount = 100;

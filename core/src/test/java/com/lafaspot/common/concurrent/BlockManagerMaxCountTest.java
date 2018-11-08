@@ -49,7 +49,7 @@ public final class BlockManagerMaxCountTest {
      */
     @Test
     public void testMultipleWorkers() throws InterruptedException, ExecutionException, WorkerException, TimeoutException {
-        final WorkerExecutorService exec = new WorkerExecutorService(10);
+        final WorkerExecutorService exec = new WorkerExecutorService(10, new WorkerConfig.Builder().build());
         final List<ImapWorker> workers = new ArrayList<>();
         final List<WorkerFuture<Long>> futures = new ArrayList<WorkerFuture<Long>>();
         final int workerCount = 100;
@@ -115,7 +115,7 @@ public final class BlockManagerMaxCountTest {
      */
     @Test
     public void testMultipleWorkersWithCheckedException() throws WorkerException, InterruptedException, TimeoutException, ExecutionException {
-        final WorkerExecutorService workerExecutor = new WorkerExecutorService(10);
+        final WorkerExecutorService workerExecutor = new WorkerExecutorService(10, new WorkerConfig.Builder().build());
         final int totalWorkers = 1;
         final String blockId = "blockId";
         final AtomicInteger max = new AtomicInteger(0);
@@ -169,7 +169,7 @@ public final class BlockManagerMaxCountTest {
     @Test
     public void testMultipleWorkersWithUncheckedException() throws WorkerException, InterruptedException, TimeoutException, ExecutionException {
         final int numThreads = 10;
-        final WorkerExecutorService workerExecutor = new WorkerExecutorService(numThreads);
+        final WorkerExecutorService workerExecutor = new WorkerExecutorService(numThreads, new WorkerConfig.Builder().build());
         final int totalWorkers = 100;
         final String blockId = "blockId";
         final AtomicInteger max = new AtomicInteger(0);
@@ -223,7 +223,7 @@ public final class BlockManagerMaxCountTest {
     @Test
     public void testMultipleAysncWorkersWithCheckedException() throws WorkerException, InterruptedException, TimeoutException, ExecutionException {
         final int numThreads = 10;
-        final WorkerExecutorService workerExecutor = new WorkerExecutorService(numThreads);
+        final WorkerExecutorService workerExecutor = new WorkerExecutorService(numThreads, new WorkerConfig.Builder().build());
         final int totalWorkers = 100;
         final String blockId = "blockId";
         final AtomicInteger max = new AtomicInteger(0);
@@ -277,7 +277,7 @@ public final class BlockManagerMaxCountTest {
     @Test
     public void testMultipleAysncWorkersWithUncheckedException() throws WorkerException, InterruptedException, TimeoutException, ExecutionException {
         final int numThreads = 10;
-        final WorkerExecutorService workerExecutor = new WorkerExecutorService(numThreads);
+        final WorkerExecutorService workerExecutor = new WorkerExecutorService(numThreads, new WorkerConfig.Builder().build());
         final int totalWorkers = 100;
         final String blockId = "blockId";
         final AtomicInteger max = new AtomicInteger(0);
@@ -568,7 +568,7 @@ public final class BlockManagerMaxCountTest {
      */
     @Test
     public void testMultipleWorkersAsync() throws InterruptedException, ExecutionException, WorkerException, TimeoutException {
-        final WorkerExecutorService exec = new WorkerExecutorService(10);
+        final WorkerExecutorService exec = new WorkerExecutorService(10, new WorkerConfig.Builder().build());
         final List<ImapWorkerAsync> workers = new ArrayList<>();
         final List<WorkerFuture<Long>> futures = new ArrayList<WorkerFuture<Long>>();
         int workerCount = 100;

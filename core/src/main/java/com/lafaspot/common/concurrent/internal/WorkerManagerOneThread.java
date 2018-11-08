@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.lafaspot.common.concurrent.WorkerBlockManager;
+import com.lafaspot.common.concurrent.WorkerConfig;
 import com.lafaspot.common.concurrent.WorkerExecutorService;
 
 /**
@@ -63,18 +64,30 @@ public class WorkerManagerOneThread implements Callable<WorkerManagerState> {
     private static final int SLEEP_COUNT_NANO = 999999;
     /** Sleep buffer factor add between each execute. */
     private static final int SLEEP_BUFFER_FACTOR = 50000;
+    /** cleanup frequency for thread locals  - 1 hour.*/
+    private static final int THREADLOCAL_CLEANUP_FREQUENCY = 60 * 60 * 1000;
+    /** Multiplication factor for converting value from nanos to millis. */
+    private static final int MULTIPLIER_NANOS_MILLIS = 1000000;
+    /** worker config. */
+    private WorkerConfig workerConfig;
+    /** time in milliseconds when the thread local was last cleaned. */
+    private long lastThreadLocalCleanupTime;
 
     /**
      * Creates an instance of this callable for the given executor and worker queue.
      *
      * @param executor the executor instance to which this object will be submitted
      * @param queue the WorkerQueue from which this thread should retrieve workers
+     * @param config worker config.
      */
-    public WorkerManagerOneThread(@Nonnull final WorkerExecutorService executor, @Nonnull final WorkerQueue queue) {
+    public WorkerManagerOneThread(@Nonnull final WorkerExecutorService executor, @Nonnull final WorkerQueue queue,
+            @Nonnull final WorkerConfig config) {
         executorService = executor;
         workers = new LinkedList<WorkerWrapper>();
         workerIter = workers.listIterator();
         workerSourceQueue = queue;
+        workerConfig = config;
+        lastThreadLocalCleanupTime = System.currentTimeMillis();
     }
 
     /**
@@ -110,6 +123,11 @@ public class WorkerManagerOneThread implements Callable<WorkerManagerState> {
                     existingWorker = workerIter.next();
                 } else {
                     existingWorker = null;
+                }
+                if (workerConfig.getEnableThreadLocalCleanupPeriodically()
+                        && loopStartTime * MULTIPLIER_NANOS_MILLIS - lastThreadLocalCleanupTime > THREADLOCAL_CLEANUP_FREQUENCY) {
+                    cleanThreadLocals();
+                    lastThreadLocalCleanupTime = loopStartTime * MULTIPLIER_NANOS_MILLIS;
                 }
             }
 
@@ -184,7 +202,9 @@ public class WorkerManagerOneThread implements Callable<WorkerManagerState> {
             }
         }
         workerSourceQueue.removeFuturesDone();
-        cleanThreadLocals();
+        if (workerConfig.getEnableThreadLocalCleanupOnExit()) {
+            cleanThreadLocals();
+        }
         return new WorkerManagerState(workers);
     }
 

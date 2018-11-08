@@ -47,7 +47,7 @@ public class WorkerManagerOneThreadTest {
      */
     @Test
     public void testWorkerManagerOneThreadWithMultipleWorkers() throws InterruptedException, ExecutionException, WorkerException, TimeoutException {
-        final WorkerExecutorService exec = new WorkerExecutorService(1);
+        final WorkerExecutorService exec = new WorkerExecutorService(1, new WorkerConfig.Builder().build());
         final List<ImapWorker> workers = new ArrayList<>();
         final List<WorkerFuture<Integer>> futures = new ArrayList<WorkerFuture<Integer>>();
         int workerCount = 100;
@@ -92,7 +92,7 @@ public class WorkerManagerOneThreadTest {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Test
     public void testWorkerManagerWithExecutionExceptions() throws InterruptedException, ExecutionException, WorkerException, TimeoutException {
-        final WorkerExecutorService exec = new WorkerExecutorService(1);
+        final WorkerExecutorService exec = new WorkerExecutorService(1, new WorkerConfig.Builder().build());
         final List<Worker> workers = new ArrayList<>();
         final List<WorkerFuture<Integer>> futures = new ArrayList<WorkerFuture<Integer>>();
         int workerCount = 100;
@@ -141,7 +141,7 @@ public class WorkerManagerOneThreadTest {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Test
     public void testWorkerManagerWithUncheckedExceptions() throws InterruptedException, ExecutionException, WorkerException, TimeoutException {
-        final WorkerExecutorService exec = new WorkerExecutorService(1);
+        final WorkerExecutorService exec = new WorkerExecutorService(1, new WorkerConfig.Builder().build());
         final List<Worker> workers = new ArrayList<>();
         final List<WorkerFuture<Integer>> futures = new ArrayList<WorkerFuture<Integer>>();
         int workerCount = 100;
