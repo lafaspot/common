@@ -46,7 +46,8 @@ public class WorkerExecutorServiceTest {
      */
     @Test
     public void testBasicSubmit() throws Exception {
-        final WorkerExecutorService executor = new WorkerExecutorService(10);
+        final WorkerExecutorService executor = new WorkerExecutorService(10,
+                new WorkerConfig.Builder().setEnableThreadLocalCleanupOnExit(true).setEnableThreadLocalCleanupPeriodically(true).build());
         final AtomicBoolean done = new AtomicBoolean(true);
         final Worker<Integer> worker = new TestWorker(done);
         final WorkerFuture<Integer> future = executor.submit(worker, new WorkerExceptionHandlerImpl());
@@ -60,7 +61,7 @@ public class WorkerExecutorServiceTest {
      */
     @Test
     public void testSingleThread() throws Exception {
-        final WorkerExecutorService executor = new WorkerExecutorService(1);
+        final WorkerExecutorService executor = new WorkerExecutorService(1, new WorkerConfig.Builder().build());
         final AtomicBoolean done = new AtomicBoolean(true);
         final Worker<Integer> worker = new TestWorker(done);
         final WorkerFuture<Integer> future = executor.submit(worker, new WorkerExceptionHandlerImpl());
@@ -85,7 +86,7 @@ public class WorkerExecutorServiceTest {
      */
     @Test
     public void testManyWorkers() throws Exception {
-        final WorkerExecutorService executor = new WorkerExecutorService(10);
+        final WorkerExecutorService executor = new WorkerExecutorService(10, new WorkerConfig.Builder().build());
         final AtomicBoolean done = new AtomicBoolean(false);
         final AtomicBoolean done2 = new AtomicBoolean(false);
         final List<Worker<Integer>> workers = new ArrayList<>();
@@ -117,7 +118,7 @@ public class WorkerExecutorServiceTest {
      */
     @Test(expectedExceptions = ExecutionException.class, expectedExceptionsMessageRegExp = "java.lang.Exception: Failed")
     public void testWorkerWithException() throws Exception {
-        final WorkerExecutorService executor = new WorkerExecutorService(10);
+        final WorkerExecutorService executor = new WorkerExecutorService(10, new WorkerConfig.Builder().build());
         final Worker<Integer> worker = new TestExceptionWorker();
         final WorkerFuture<Integer> future = executor.submit(worker, new WorkerExceptionHandlerImpl());
         future.get(60, TimeUnit.SECONDS);
@@ -130,7 +131,7 @@ public class WorkerExecutorServiceTest {
      */
     @Test
     public void testWorkerCanceled() throws WorkerException {
-        final WorkerExecutorService executor = new WorkerExecutorService(10);
+        final WorkerExecutorService executor = new WorkerExecutorService(10, new WorkerConfig.Builder().build());
         final WorkerFuture<Integer> future = executor.submit(workerEndless, new WorkerExceptionHandlerImpl());
         Assert.assertFalse(future.isCancelled());
         Assert.assertTrue(future.cancel(true));
@@ -160,7 +161,7 @@ public class WorkerExecutorServiceTest {
      */
     @Test(expectedExceptions = ExecutionException.class, expectedExceptionsMessageRegExp = "java.lang.RuntimeException: Failed")
     public void testWorkerRuntimeException() throws Exception {
-        final WorkerExecutorService executor = new WorkerExecutorService(10);
+        final WorkerExecutorService executor = new WorkerExecutorService(10, new WorkerConfig.Builder().build());
         final Worker<Integer> worker = new TestRuntimeExceptionWorker();
         final WorkerFuture<Integer> future = executor.submit(worker, new WorkerExceptionHandlerImpl());
         future.get(60, TimeUnit.SECONDS);
@@ -173,7 +174,7 @@ public class WorkerExecutorServiceTest {
      */
     @Test
     public void testWorkerWithoutBlockManager() throws Exception {
-        final WorkerExecutorService executor = new WorkerExecutorService(10);
+        final WorkerExecutorService executor = new WorkerExecutorService(10, new WorkerConfig.Builder().build());
         final Worker<Integer> worker = new TestNoBlockManagerWorker();
         try {
             executor.submit(worker, new WorkerExceptionHandlerImpl());
@@ -193,7 +194,7 @@ public class WorkerExecutorServiceTest {
      */
     @Test
     public void testGoodWorker() throws InterruptedException, ExecutionException, WorkerException, TimeoutException {
-        final WorkerExecutorService exec = new WorkerExecutorService(11000);
+        final WorkerExecutorService exec = new WorkerExecutorService(11000, new WorkerConfig.Builder().build());
         final WorkerFuture<Integer> future = exec.submit(worker, new WorkerExceptionHandlerImpl());
         final Integer integer = future.get(60, TimeUnit.SECONDS);
         Assert.assertEquals(integer, new Integer(1));
@@ -210,7 +211,7 @@ public class WorkerExecutorServiceTest {
      */
     @Test
     public void testWorkerWithHasErrors() throws InterruptedException, ExecutionException, WorkerException, TimeoutException {
-        final WorkerExecutorService exec = new WorkerExecutorService(11000);
+        final WorkerExecutorService exec = new WorkerExecutorService(11000, new WorkerConfig.Builder().build());
         final WorkerFuture<Integer> future = exec.submit(workerException, new WorkerExceptionHandlerImpl());
         try {
             future.get(60, TimeUnit.SECONDS);
@@ -231,7 +232,7 @@ public class WorkerExecutorServiceTest {
      */
     @Test
     public void testWorkerWithWorkerException() throws InterruptedException, ExecutionException, WorkerException, TimeoutException {
-        final WorkerExecutorService exec = new WorkerExecutorService(11000);
+        final WorkerExecutorService exec = new WorkerExecutorService(11000, new WorkerConfig.Builder().build());
         final WorkerFuture<Integer> future = exec.submit(workerWorkerException, new WorkerExceptionHandlerImpl());
         try {
             future.get(60, TimeUnit.SECONDS);
@@ -252,7 +253,7 @@ public class WorkerExecutorServiceTest {
      */
     @Test
     public void test32Workers() throws InterruptedException, ExecutionException, WorkerException, TimeoutException {
-        final WorkerExecutorService exec = new WorkerExecutorService(32);
+        final WorkerExecutorService exec = new WorkerExecutorService(32, new WorkerConfig.Builder().build());
         final List<WorkerFuture<Integer>> futures = new ArrayList<WorkerFuture<Integer>>();
         for (int i = 0; i < 32; i++) {
             futures.add(exec.submit(worker, new WorkerExceptionHandlerImpl()));
@@ -274,7 +275,7 @@ public class WorkerExecutorServiceTest {
      */
     @Test
     public void testCancel1000Workers() throws WorkerException, InterruptedException, ExecutionException {
-        final WorkerExecutorService exec = new WorkerExecutorService(11000);
+        final WorkerExecutorService exec = new WorkerExecutorService(11000, new WorkerConfig.Builder().build());
         final List<WorkerFuture<Integer>> futures = new ArrayList<WorkerFuture<Integer>>();
         for (int i = 0; i < 1000; i++) {
             futures.add(exec.submit(workerEndless, new WorkerExceptionHandlerImpl()));

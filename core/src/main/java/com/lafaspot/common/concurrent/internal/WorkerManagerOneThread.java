@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.lafaspot.common.concurrent.WorkerBlockManager;
+import com.lafaspot.common.concurrent.WorkerConfig;
 import com.lafaspot.common.concurrent.WorkerExecutorService;
 
 /**
@@ -63,18 +64,30 @@ public class WorkerManagerOneThread implements Callable<WorkerManagerState> {
     private static final int SLEEP_COUNT_NANO = 999999;
     /** Sleep buffer factor add between each execute. */
     private static final int SLEEP_BUFFER_FACTOR = 50000;
+    /** cleanup frequency for thread locals  - 1 hour.*/
+    private static final int THREADLOCAL_CLEANUP_FREQUENCY = 60 * 60 * 1000;
+    /** Multiplication factor for converting value from nanos to millis. */
+    private static final int MULTIPLIER_NANOS_MILLIS = 1000000;
+    /** worker config. */
+    private WorkerConfig workerConfig;
+    /** time in milliseconds when the thread local was last cleaned. */
+    private long lastThreadLocalCleanupTime;
 
     /**
      * Creates an instance of this callable for the given executor and worker queue.
      *
      * @param executor the executor instance to which this object will be submitted
      * @param queue the WorkerQueue from which this thread should retrieve workers
+     * @param config worker config.
      */
-    public WorkerManagerOneThread(@Nonnull final WorkerExecutorService executor, @Nonnull final WorkerQueue queue) {
+    public WorkerManagerOneThread(@Nonnull final WorkerExecutorService executor, @Nonnull final WorkerQueue queue,
+            @Nonnull final WorkerConfig config) {
         executorService = executor;
         workers = new LinkedList<WorkerWrapper>();
         workerIter = workers.listIterator();
         workerSourceQueue = queue;
+        workerConfig = config;
+        lastThreadLocalCleanupTime = System.currentTimeMillis();
     }
 
     /**
@@ -110,6 +123,11 @@ public class WorkerManagerOneThread implements Callable<WorkerManagerState> {
                     existingWorker = workerIter.next();
                 } else {
                     existingWorker = null;
+                }
+                if (workerConfig.getEnableThreadLocalCleanupPeriodically()
+                        && loopStartTime * MULTIPLIER_NANOS_MILLIS - lastThreadLocalCleanupTime > THREADLOCAL_CLEANUP_FREQUENCY) {
+                    cleanThreadLocals();
+                    lastThreadLocalCleanupTime = loopStartTime * MULTIPLIER_NANOS_MILLIS;
                 }
             }
 
@@ -184,7 +202,9 @@ public class WorkerManagerOneThread implements Callable<WorkerManagerState> {
             }
         }
         workerSourceQueue.removeFuturesDone();
-        cleanThreadLocals();
+        if (workerConfig.getEnableThreadLocalCleanupOnExit()) {
+            cleanThreadLocals();
+        }
         return new WorkerManagerState(workers);
     }
 
@@ -198,6 +218,9 @@ public class WorkerManagerOneThread implements Callable<WorkerManagerState> {
             java.lang.reflect.Field threadLocalsField = Thread.class.getDeclaredField("threadLocals");
             threadLocalsField.setAccessible(true);
             Object threadLocalTable = threadLocalsField.get(thread);
+            if (threadLocalTable == null) {
+                return;
+            }
 
             // Get a reference to the array holding the thread local variables inside the
             // ThreadLocalMap of the current thread
@@ -205,6 +228,9 @@ public class WorkerManagerOneThread implements Callable<WorkerManagerState> {
             java.lang.reflect.Field tableField = threadLocalMapClass.getDeclaredField("table");
             tableField.setAccessible(true);
             Object table = tableField.get(threadLocalTable);
+            if (table == null) {
+                return;
+            }
 
             // The key to the ThreadLocalMap is a WeakReference object. The referent field of this object
             // is a reference to the actual ThreadLocal variable
@@ -223,11 +249,13 @@ public class WorkerManagerOneThread implements Callable<WorkerManagerState> {
                         entryValueField.setAccessible(true);
                         Object entryValue = entryValueField.get(entry);
                         StringBuilder sb = new StringBuilder(512);
-                        sb.append(entryValue.getClass().getName());
-                        if (entryValue instanceof SoftReference) {
-                            sb.append(":").append(((SoftReference) entryValue).get().getClass().getName());
-                        } else if (entryValue instanceof WeakReference) {
-                            sb.append(":").append(((WeakReference) entryValue).get().getClass().getName());
+                        if (entryValue != null) {
+                            sb.append(entryValue.getClass().getName());
+                            if (entryValue instanceof SoftReference) {
+                                sb.append(":").append(((SoftReference) entryValue).get().getClass().getName());
+                            } else if (entryValue instanceof WeakReference) {
+                                sb.append(":").append(((WeakReference) entryValue).get().getClass().getName());
+                            }
                         }
                         logger.debug(
                                 "threadlocal found please remove this from code, as it create memory/full gc problems, thread name={},class={}",
