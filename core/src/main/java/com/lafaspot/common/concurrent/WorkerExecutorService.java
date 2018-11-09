@@ -58,14 +58,17 @@ public class WorkerExecutorService {
     private static final int LONG_SHUTDOWN_WAIT = 10;
     /** Short timeout value for waiting for shutdown. */
     private static final int SHORT_SHUTDOWN_WAIT = 5;
+    /** worker config object. */
+    private final WorkerConfig workerConfig;
 
     /**
      * Creates a WorkerExecutorService that creates new threads as needed, but will reuse previously constructed threads when available.
      *
      * @param numThreads the number of threads for the executor pool
+     * @param workerConfig the worker config object.
      */
-    public WorkerExecutorService(final int numThreads) {
-        this("WorkerExecutorService thread", numThreads);
+    public WorkerExecutorService(final int numThreads, final WorkerConfig workerConfig) {
+        this("WorkerExecutorService thread", numThreads, workerConfig);
     }
 
     /**
@@ -73,9 +76,10 @@ public class WorkerExecutorService {
      *
      * @param clazz class whose name will be used to identify
      * @param numThreads the number of threads for the executor pool
+     * @param workerConfig the worker config object.
      */
-    public WorkerExecutorService(final Class<?> clazz, final int numThreads) {
-        this(clazz.getName(), numThreads);
+    public WorkerExecutorService(final Class<?> clazz, final int numThreads, final WorkerConfig workerConfig) {
+        this(clazz.getName(), numThreads, workerConfig);
     }
 
     /**
@@ -83,13 +87,15 @@ public class WorkerExecutorService {
      *
      * @param name the name of this executor service
      * @param numThreads the maximum number of concurrent threads for this executor
+     * @param workerConfig the worker config object.
      */
-    public WorkerExecutorService(final String name, final int numThreads) {
+    public WorkerExecutorService(final String name, final int numThreads, final WorkerConfig workerConfig) {
         this.name = name;
         threadFactory = new ExecutorThreadFactory("WorkerExecutorService thread for " + name);
         this.numThreads = numThreads;
         executorService = Executors.newFixedThreadPool(numThreads, threadFactory);
         workerQueue = new WorkerQueue();
+        this.workerConfig = workerConfig;
     }
 
     /**
@@ -122,7 +128,7 @@ public class WorkerExecutorService {
         }
         if (workerQueue.futureSize() < numThreads) {
             // This will allow the executor to use more threads if needed
-            final Future<WorkerManagerState> future = executorService.submit(new WorkerManagerOneThread(this, workerQueue));
+            final Future<WorkerManagerState> future = executorService.submit(new WorkerManagerOneThread(this, workerQueue, workerConfig));
             workerQueue.addFuture(future);
         }
         workerQueue.add(workerWrapper);
