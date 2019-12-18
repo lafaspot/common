@@ -15,7 +15,7 @@
  * limitations under the License.
  *  ====================================================================
  */
-package com.lafaspot.common.concurrent;
+package com.lafaspot.common.concurrent.internal;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -30,6 +30,14 @@ import javax.annotation.Nonnull;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import com.lafaspot.common.concurrent.BlockManagerMaxCount;
+import com.lafaspot.common.concurrent.Worker;
+import com.lafaspot.common.concurrent.WorkerBlockManager;
+import com.lafaspot.common.concurrent.WorkerConfig;
+import com.lafaspot.common.concurrent.WorkerException;
+import com.lafaspot.common.concurrent.WorkerExceptionHandler;
+import com.lafaspot.common.concurrent.WorkerExecutorService;
+import com.lafaspot.common.concurrent.WorkerFuture;
 
 /**
  * Unit test for {@link WorkerManagerOneThread}.
