@@ -74,7 +74,7 @@ public enum SystemSettings {
         return ip;
     }
 
-    private SystemSettings() {
+    SystemSettings() {
         try {
             hostname = InetAddressCache.INSTANCE.getHostName();
             final int tldStartIndex = hostname.lastIndexOf(".");

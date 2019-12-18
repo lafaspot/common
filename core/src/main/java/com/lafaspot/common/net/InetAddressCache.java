@@ -141,7 +141,7 @@ public enum InetAddressCache {
      *
      * @throws SecurityException if the client does not have permission to look up the host's name or address
      */
-    private InetAddressCache() {
+    InetAddressCache() {
         try {
             initLocalHostAddress();
             initLocalHostName();

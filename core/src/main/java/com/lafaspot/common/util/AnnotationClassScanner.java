@@ -133,7 +133,9 @@ public class AnnotationClassScanner<T extends Annotation> {
 			try {
 				clazzez.addAll(scanPackageAnnotatedClasses(sPackage));
 			} catch (final IOException e) {
-				logger.warn("AnnotationClassScanner failed for package: " + sPackage.getName(), e);
+				if (logger.isWarn()) {
+					logger.warn("AnnotationClassScanner failed for package: " + sPackage.getName(), e);
+				}
 			}
 		}
 		return clazzez;
