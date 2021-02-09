@@ -39,6 +39,7 @@ public enum SystemSettings {
     private final Logger logger = LoggerFactory.getLogger(SystemSettings.class);
     protected String colo;
     protected String ip;
+    protected String cluster;
 
     /**
      * top-level domain is domain at highest level in the hierarchical Domain Name System. for e.g: domain name www.example.com, the top-level domain
@@ -68,13 +69,20 @@ public enum SystemSettings {
     }
 
     /**
+     * @return the cluster
+     */
+    public String getCluster() {
+        return cluster;
+    }
+
+    /**
      * @return the ip
      */
     public String getIp() {
         return ip;
     }
 
-    private SystemSettings() {
+    SystemSettings() {
         try {
             hostname = InetAddressCache.INSTANCE.getHostName();
             final int tldStartIndex = hostname.lastIndexOf(".");
@@ -97,12 +105,7 @@ public enum SystemSettings {
             ip = "127.0.0.1";
         }
 
-        final String[] tokens = hostname.split("\\.");
-        if (tokens == null || tokens.length < 3) {
-            colo = "undef";
-            return;
-        }
-
-        colo = tokens[2].trim();
+        colo = System.getProperty("com.lafaspot.common.net.coloName", "undef");
+        cluster = System.getProperty("com.lafaspot.common.net.clusterName", "undef");
     }
 }
