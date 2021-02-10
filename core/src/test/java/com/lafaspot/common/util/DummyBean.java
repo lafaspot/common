@@ -18,7 +18,6 @@
 
 package com.lafaspot.common.util;
 
-import javax.xml.bind.annotation.XmlElement;
 
 /**
  * Dummy Bean.
@@ -39,7 +38,6 @@ public class DummyBean {
 	 * 
 	 * @return Address
 	 */
-	@XmlElement(required = false)
 	public String getTestAddress() {
 		return testAddress;
 	}
@@ -49,7 +47,6 @@ public class DummyBean {
 	 * 
 	 * @return test notes
 	 */
-	@XmlElement(name = "notes", required = false)
 	public String getTestNotes() {
 		return testNotes;
 	}

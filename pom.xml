@@ -62,10 +62,10 @@
         <excludedJNILibraries />
         <excludedWarJNILibraries />
         <jdk.version>1.8</jdk.version>
-        <maven-findbugs-plugin.version>3.0.1</maven-findbugs-plugin.version>
+        <maven-findbugs-plugin.version>3.0.4</maven-findbugs-plugin.version>
         <maven-surefire-plugin.version>2.17</maven-surefire-plugin.version>
         <maven-pmd-plugin.version>3.4</maven-pmd-plugin.version>
-        <maven-checkstyle-plugin.version>2.16</maven-checkstyle-plugin.version>
+        <maven-checkstyle-plugin.version>3.1.1</maven-checkstyle-plugin.version>
         <jersey.version>2.18</jersey.version>
         <jackson.version>2.5.3</jackson.version>
         <jacoco-maven-plugin.version>0.7.5.201505241946</jacoco-maven-plugin.version>
@@ -102,6 +102,11 @@
                 <groupId>com.google.code.findbugs</groupId>
                 <artifactId>jsr305</artifactId>
                 <version>1.3.9</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.classgraph</groupId>
+                <artifactId>classgraph</artifactId>
+                <version>4.8.87</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -403,6 +408,7 @@
                         TO FIND CONFIG TEST RESOURCES -->
                     <useSystemClassLoader>true</useSystemClassLoader>
                     <useManifestOnlyJar>false</useManifestOnlyJar>
+                    <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -415,7 +421,6 @@
                         <configuration>
                             <encoding>UTF-8</encoding>
                             <consoleOutput>true</consoleOutput>
-                            <linkXRef>false</linkXRef>
                             <configLocation>checkstyle.xml</configLocation>
                             <consoleOutput>true</consoleOutput>
                             <failsOnError>true</failsOnError>
