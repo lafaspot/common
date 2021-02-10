@@ -42,11 +42,13 @@ public @interface WorkerModel {
 
     /**
      * The type, Sync or Async.
+     * @return type
      */
     Model type();
 
     /**
      * Description of the worker.
+     * @return description
      */
     String description();
 }

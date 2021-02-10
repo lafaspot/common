@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.3//EN" "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
 
-<!-- Checkstyle-Configuration: jedi checks Description: none -->
+<!-- Checkstyle-Configuration: lafaspot checks Description: none -->
 <module name="Checker">
 	<property name="severity" value="warning" />
 	<module name="TreeWalker">
 		<property name="tabWidth" value="4" />
 		<module name="JavadocMethod">
-			<!-- <property name="suppressLoadErrors" value="true" /> -->
-			<!-- <property name="allowUndeclaredRTE" value="true" /> -->
 		</module>
 		<module name="JavadocType" />
 		<module name="JavadocVariable" />
@@ -29,18 +27,8 @@
 			<property name="illegalPkgs" value="edu.emory.mathcs.backport.java.util, org.ocpsoft.prettytime.shade.edu.emory.mathcs.backport.java.util, org.apache.log4j, yjava.messaging.ynet, yjava.security.ysecure, yjava.security.yck, yjava.security.yhdrs, , yjava.messaging.ynet" />
 			<message key="import.illegal" value="Import from illegal package - {0}." />
 		</module>
-		<!--
-		<module name="ImportControl">
-			<property name="file" value="${config_loc}/jedi_checkstyle_import_control.xml"/>
-		</module>
-		-->
 		<module name="RedundantImport" />
 		<module name="UnusedImports" />
-		<!--
-		<module name="LineLength">
-			<property name="max" value="150" />
-		</module>
-		-->
 		<module name="ParameterNumber" />
 		<module name="EmptyForIteratorPad" />
 		<module name="MethodParamPad" />
@@ -73,8 +61,6 @@
 		</module>
 		<module name="MagicNumber" />
 		<module name="MissingSwitchDefault" />
-		<!-- <module name="RedundantThrows"> <property name="suppressLoadErrors"
-            value="true"/> </module> -->
 		<module name="SimplifyBooleanExpression" />
 		<module name="SimplifyBooleanReturn" />
 		<module name="FinalClass" />
@@ -211,19 +197,6 @@
 				  value="inherit" />
 	</module>
 
-	<!-- Eclipse-Only Suppression Filter Configuration / Fails for Maven
-        Commandline Maven command-line build uses pom.xml suppressionLocation setting
-        in the checkstyle configuration. Eclipse checkstyle does not recognize the
-        pom.xml setting, only the checkstyle.xml SuppressionFilter module here. But
-        Maven command-line does not compile with the following because no variable
-        is defined to locate the supporessions.xml in a way that works consistently
-        regardless of where invoked (from root of project or cd into individual projects.
-        You can set pom.xml PropertiesLocation tag with a .properties file containing
-        key=value pairs for such variables, but they are not relative to the checkstyle.xml
-        location. DISABLED: Enable only if you want to see the same exclusions from
-        eclipse, but will not build from command-line. <module name="SuppressionFilter">
-        <property name="file" value="${samedir}/jedi_checkstyle_suppressions.xml"/>
-        </module> -->
 	<module name="SuppressionFilter">
 		<property name="file"
 				  value="${config_loc}/checkstyle_suppressions.xml" />

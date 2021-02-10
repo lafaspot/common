@@ -94,6 +94,7 @@ public class WorkerFutureImpl<T> implements WorkerFuture<T> {
     /**
      * Invoked when the worker has completed its processing.
      *
+     * @param data the data to be returned by this Future
      * @param canceled true if the call was the result of a cancellation
      */
     protected void done(final T data, final boolean canceled) {
@@ -115,6 +116,7 @@ public class WorkerFutureImpl<T> implements WorkerFuture<T> {
     /**
      * Invoked when the worker throws an exception.
      *
+     * @param canceled if the Future should be canceled
      * @param cause the exception that caused execution to fail
      */
     protected void done(final boolean canceled, final Exception cause) {
