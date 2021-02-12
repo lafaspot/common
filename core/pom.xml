@@ -24,9 +24,14 @@
 			<artifactId>testng</artifactId>
 			<scope>test</scope>
 		</dependency>
-            <dependency>
-                <groupId>com.github.lafa.logfast</groupId>
-                <artifactId>logfast.core</artifactId>
-            </dependency>
+		<dependency>
+			<groupId>com.github.lafa.logfast</groupId>
+			<artifactId>logfast.core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.github.classgraph</groupId>
+			<artifactId>classgraph</artifactId>
+			<version>4.8.87</version>
+		</dependency>
 	</dependencies>
 </project>
