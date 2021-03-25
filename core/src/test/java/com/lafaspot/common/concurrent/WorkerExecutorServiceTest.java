@@ -185,6 +185,23 @@ public class WorkerExecutorServiceTest {
     }
 
     /**
+     * Tests with good workers without exception handler.
+     *
+     * @throws InterruptedException not expected
+     * @throws ExecutionException not expected
+     * @throws WorkerException not expected
+     * @throws TimeoutException not expected
+     */
+    @Test
+    public void testGoodWorkerWithoutExceptionHandler() throws InterruptedException, ExecutionException, WorkerException, TimeoutException {
+        final WorkerExecutorService exec = new WorkerExecutorService(11000, new WorkerConfig.Builder().build());
+        final WorkerFuture<Integer> future = exec.submit(worker);
+        final Integer integer = future.get(60, TimeUnit.SECONDS);
+        Assert.assertEquals(integer, new Integer(1));
+        exec.shutdown();
+    }
+
+    /**
      * Tests with good workers.
      *
      * @throws InterruptedException not expected
