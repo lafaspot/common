@@ -134,6 +134,42 @@ public class WorkerExecutorService {
         workerQueue.add(workerWrapper);
         return workerWrapper.getFuture();
     }
+    
+        /**
+     * Submits a value-returning worker for execution and returns a WorkerFuture representing the pending results of the task. The Future's get method
+     * will return the task's result upon successful completion. If you would like to immediately block waiting for a task, you can use constructions
+     * of the form <code> result = exec.submit(aWorker).get(); </code>
+     *
+     * Throws:
+     *
+     * RejectedExecutionException - if the worker cannot be scheduled for execution
+     *
+     * NullPointerException - if the worker is null
+     *
+     * @param <V> data type for the worker
+     * @param worker the worker to be executed by this service
+     * @return a future for the given worker
+     * @throws WorkerException if an error occurs executing the worker
+     */
+    public <V> WorkerFuture<V> submit(final Worker<V> worker) throws WorkerException {
+        final WorkerWrapper<V> workerWrapper = new WorkerWrapper<V>(worker);
+        // cleanup the future if number of threads is 1, as the last future is not cleaned up by the worker manager thread. WorkerManagerOneThread
+        // tries to cleanup all the futures, but it cannot clean itself, causing one future to be left behind. Future size will always be 1 once the
+        // last worker manager exits. So, cleanup all the future else the worker will never get executed.
+        if (worker.getBlockManager() == null) {
+            throw new WorkerException("getBlockManager() returned null.");
+        }
+        if (numThreads == 1) {
+            workerQueue.removeFuturesDone();
+        }
+        if (workerQueue.futureSize() < numThreads) {
+            // This will allow the executor to use more threads if needed
+            final Future<WorkerManagerState> future = executorService.submit(new WorkerManagerOneThread(this, workerQueue, workerConfig));
+            workerQueue.addFuture(future);
+        }
+        workerQueue.add(workerWrapper);
+        return workerWrapper.getFuture();
+    }
 
     /**
      * Initiates an shutdown in which previously submitted tasks are executed, but no new tasks will be accepted.Invocation has no additional effect
